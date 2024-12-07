@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrient Requirements</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body style="background-color: #A7C957; font-family: 'Parkinsans', sans-serif;">
+    
+    <header>
+        <nav class="navbar navbar-expand-sm">
+            <div class="container">
+            <div class="collapse navbaar-collapse" id="navmenu">
+            <ul class="navbar-nav m-auto">   
+                <li class="nav-item">
+                    <a href="/" class="navlink">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/feed-options" class="navlink">Cost Estimation</a>
+                </li>
+            </ul>
+        </div>
+        </div>
+        </nav>
+    </header>
+
+  
+        <br><br>
+        <section class="req_pic">
+            <div class="calc">
+                <h1>Calculate Nutrient Requirements</h1>
+            </div>
+        </section>
+        <br>
+        <main>
+        <form id="nutrition-form">
+            <label for="animal-type">Animal Type :</label>
+            <select id="animal-type" name="animal-type">
+                <option value="cattle">Cattle</option>
+                <option value="poultry">Poultry</option>
+                <option value="goat">Goat</option>
+            </select>
+            <br><br>
+            <label for="age">Age (Years) :</label>
+            <input type="number" id="age" name="age" step="0.01">
+
+            <label for="weight">Weight (kg) :</label>
+            <input type="number" id="weight" name="weight" required>
+
+            <label for="activity">Activity Level :</label>
+            <select id="activity_lvl" name="activity">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+            <br><br>
+            <button type="submit">Submit</button>
+        </form>
+
+        <div id="results" style="display:none;">
+            <h3>Results </h3>
+            <p id="nutrient-output"></p>
+        </div>
+    </main>
+</body>
+
+<script>
+    document.getElementById('nutrition-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+
+        fetch('/animal-requirements', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('nutrient-output').innerText = 
+                `Protein: ${data.protein} g, Fiber: ${data.fiber} g`;
+        })
+        .catch(error => console.error('Error:', error));
+    });
+    
+    // Add Google Translate widget to the navbar dynamically
+    document.addEventListener("DOMContentLoaded", function () {
+    const navBar = document.querySelector(".navbar-nav");
+    if (navBar) {
+        const translateDiv = document.createElement("div");
+        translateDiv.id = "google_translate_element";
+        translateDiv.className = "nav-link";
+        navBar.appendChild(translateDiv);
+
+        // Load Google Translate Script
+        const script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+        document.body.appendChild(script);
+    }
+});
+
+// regional lang
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+        pageLanguage: "en",
+        includedLanguages: "en,hi,mr,bn,ml,ta,te",
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    }, "google_translate_element");
+};
+</script>
+</html>
